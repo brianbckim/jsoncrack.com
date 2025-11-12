@@ -2,12 +2,16 @@ import React from "react";
 import { ColorSwatch } from "@mantine/core";
 import styled from "styled-components";
 
-const StyledRow = styled.span`
+const StyledRow = styled.span<{ $editing?: boolean }>`
   display: inline-flex;
   align-items: center;
-  overflow: hidden;
+  overflow: ${({ $editing }) => ($editing ? "visible" : "hidden")};
   gap: 4px;
   vertical-align: middle;
+  white-space: ${({ $editing }) => ($editing ? "normal" : "nowrap")};
+  text-overflow: ${({ $editing }) => ($editing ? "clip" : "ellipsis")};
+  flex-wrap: ${({ $editing }) => ($editing ? "wrap" : "nowrap")};
+  font-size: ${({ $editing }) => ($editing ? "9px" : "inherit")};
 `;
 
 const isURL = (word: string) => {
@@ -30,19 +34,22 @@ const Linkify = (text: string) => {
   return <span dangerouslySetInnerHTML={{ __html: html }} />;
 };
 
-export const TextRenderer = ({ children }: React.PropsWithChildren) => {
-  if (typeof children === "string" && isURL(children)) return Linkify(children);
+export const TextRenderer = (
+  { children, editing }: React.PropsWithChildren & { editing?: boolean }
+) => {
+  if (typeof children === "string" && isURL(children))
+    return <StyledRow $editing={editing}>{Linkify(children)}</StyledRow>;
 
   if (typeof children === "string" && isColorFormat(children)) {
     return (
-      <StyledRow>
+      <StyledRow $editing={editing}>
         <ColorSwatch size={12} radius={4} mr={4} color={children} />
         {children}
       </StyledRow>
     );
   }
 
-  return <>{`${children}`}</>;
+  return <StyledRow $editing={editing}>{`${children}`}</StyledRow>;
 };
 
 function isColorFormat(colorString: string) {

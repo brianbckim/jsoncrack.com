@@ -16,6 +16,7 @@ export interface Graph {
   selectedNode: NodeData | null;
   path: string;
   aboveSupportedLimit: boolean;
+  skipAutoFitOnce?: boolean;
 }
 
 const initialStates: Graph = {
@@ -28,6 +29,7 @@ const initialStates: Graph = {
   selectedNode: null,
   path: "",
   aboveSupportedLimit: false,
+  skipAutoFitOnce: false,
 };
 
 interface GraphActions {

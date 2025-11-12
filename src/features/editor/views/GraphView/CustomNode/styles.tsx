@@ -23,14 +23,14 @@ export const StyledLinkItUrl = styled(LinkItUrl)`
   pointer-events: all;
 `;
 
-export const StyledForeignObject = styled.foreignObject<{ $isObject?: boolean }>`
+export const StyledForeignObject = styled.foreignObject<{ $isObject?: boolean; $editing?: boolean }>`
   text-align: ${({ $isObject }) => !$isObject && "center"};
   color: ${({ theme }) => theme.NODE_COLORS.TEXT};
   font-family: monospace;
-  font-size: 12px;
+  font-size: ${({ $editing }) => ($editing ? "9px" : "10px")};
   font-weight: 500;
-  overflow: hidden;
-  pointer-events: none;
+  overflow: ${({ $editing }) => ($editing ? "visible" : "hidden")};
+  pointer-events: ${({ $editing }) => ($editing ? "all" : "none")};
 
   &.searched {
     background: rgba(27, 255, 0, 0.1);
@@ -47,7 +47,7 @@ export const StyledForeignObject = styled.foreignObject<{ $isObject?: boolean }>
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
+    font-size: inherit;
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -58,6 +58,7 @@ export const StyledForeignObject = styled.foreignObject<{ $isObject?: boolean }>
 export const StyledKey = styled.span<{
   $type: TextColorFn["$type"];
   $value?: TextColorFn["$value"];
+  $editing?: boolean;
 }>`
   display: inline;
   align-items: center;
@@ -67,21 +68,26 @@ export const StyledKey = styled.span<{
   height: auto;
   line-height: inherit;
   padding: 0; // Remove padding
+  font-size: ${({ $editing }) => ($editing ? "9px" : "inherit")};
   color: ${({ theme, $type, $value = "" }) => getTextColor({ $value, $type, theme })};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: ${({ $editing }) => ($editing ? "visible" : "hidden")};
+  text-overflow: ${({ $editing }) => ($editing ? "clip" : "ellipsis")};
+  white-space: ${({ $editing }) => ($editing ? "normal" : "nowrap")};
+  word-break: break-word;
+  max-width: 100%;
 `;
 
-export const StyledRow = styled.span<{ $value: TextColorFn["$value"] }>`
+export const StyledRow = styled.span<{ $value: TextColorFn["$value"]; $editing?: boolean }>`
   padding: 3px 10px;
-  height: ${NODE_DIMENSIONS.ROW_HEIGHT}px;
-  line-height: 24px;
+  height: ${({ $editing }) => ($editing ? "auto" : `${NODE_DIMENSIONS.ROW_HEIGHT}px`)};
+  line-height: ${({ $editing }) => ($editing ? "16px" : "24px")};
   color: ${({ theme, $value }) => getTextColor({ $value, theme, $type: typeof $value })};
   display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: ${({ $editing }) => ($editing ? "visible" : "hidden")};
+  text-overflow: ${({ $editing }) => ($editing ? "clip" : "ellipsis")};
+  white-space: ${({ $editing }) => ($editing ? "normal" : "nowrap")};
+  min-width: ${({ $editing }) => ($editing ? "160px" : "0")};
+  word-break: break-word;
   border-bottom: 1px solid ${({ theme }) => theme.NODE_COLORS.DIVIDER};
   box-sizing: border-box;
 

@@ -85,6 +85,7 @@ const GraphCanvas = ({ isWidget }: GraphProps) => {
   const direction = useGraph(state => state.direction);
   const nodes = useGraph(state => state.nodes);
   const edges = useGraph(state => state.edges);
+  const skipAutoFitOnce = useGraph(state => state.skipAutoFitOnce);
   const colorScheme = useComputedColorScheme();
   const [paneWidth, setPaneWidth] = React.useState(2000);
   const [paneHeight, setPaneHeight] = React.useState(2000);
@@ -100,13 +101,16 @@ const GraphCanvas = ({ isWidget }: GraphProps) => {
 
         setTimeout(() => {
           window.requestAnimationFrame(() => {
-            if (changeRatio > 70 || isWidget) centerView();
+            if (changeRatio > 70 || isWidget) {
+              if (!skipAutoFitOnce) centerView();
+              else useGraph.setState({ skipAutoFitOnce: false });
+            }
             setLoading(false);
           });
         });
       }
     },
-    [isWidget, paneHeight, paneWidth, centerView, setLoading]
+    [isWidget, paneHeight, paneWidth, centerView, setLoading, skipAutoFitOnce]
   );
 
   return (
